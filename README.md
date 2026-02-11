@@ -224,5 +224,5 @@ This application demonstrates:
 
 ## 👨‍💻 Author
 
-Your Name  
+Jayanth C N
 MERN Stack Developer
