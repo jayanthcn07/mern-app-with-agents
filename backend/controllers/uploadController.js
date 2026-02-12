@@ -35,7 +35,7 @@ const distributeTasks = async (items) => {
     await Task.create({
       firstName: item.FirstName,
       phone: item.Phone,
-      notes: item.Notes,
+      notes: item.Notes || "",
       assignedTo: agents[agentIndex]._id,
     });
 
@@ -73,10 +73,15 @@ const uploadFile = async (req, res) => {
 
     // ===== Validate Columns =====
     if (!items.length || !items[0].FirstName || !items[0].Phone) {
+      fs.unlinkSync(filePath);
       return res.status(400).json({
-        message: "Invalid file format. Required columns: FirstName, Phone, Notes",
+        message:
+          "Invalid file format. Required columns: FirstName, Phone, Notes",
       });
     }
+
+    // ===== Clear Old Tasks Before New Upload =====
+    await Task.deleteMany({});
 
     // ===== Distribute =====
     await distributeTasks(items);
@@ -88,7 +93,6 @@ const uploadFile = async (req, res) => {
       message: "File uploaded and tasks distributed successfully",
       totalItems: items.length,
     });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
